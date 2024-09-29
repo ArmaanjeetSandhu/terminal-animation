@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terminal Animation</title>
+    <style>
+      @font-face {
+        font-family: "MonaspaceArgon";
+        src: url("fonts/MonaspaceArgon-SemiWideBold.woff2") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        font-family: "MonaspaceArgon", monospace;
+        background-color: #2b2b2b;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .terminal-wrapper {
+        width: 100vw;
+        height: 100vh;
+        background-color: #1e1e1e;
+        border-radius: 0;
+        box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
+      }
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: #333;
+      }
+      .terminal-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      .terminal-button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .red {
+        background-color: #ff605c;
+      }
+      .yellow {
+        background-color: #ffbd44;
+      }
+      .green {
+        background-color: #00ca4e;
+      }
+      .terminal {
+        padding: 40px;
+        color: #fff;
+        overflow-y: auto;
+        max-height: 80vh;
+        font-size: 24px;
+      }
+      .input-line {
+        display: flex;
+        font-size: 24px;
+        margin-top: 10px;
+      }
+      .input {
+        color: #8abeb7;
+        margin-right: 8px;
+      }
+      .output {
+        white-space: pre-wrap;
+        color: #f0c674;
+        margin-bottom: 15px;
+      }
+      .cursor {
+        width: 12px;
+        height: 24px;
+        background-color: #8abeb7;
+        margin-left: 2px;
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        50% {
+          background-color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal-wrapper">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="terminal-button red"></div>
+          <div class="terminal-button yellow"></div>
+          <div class="terminal-button green"></div>
+        </div>
+      </div>
+      <div class="terminal" id="terminal"></div>
+    </div>
+
+    <script>
+      const commands = [
+        { command: "name", output: "Armaanjeet Singh Sandhu" },
+        { command: "age", output: "22" },
+        { command: "date", output: new Date().toLocaleString() },
+      ];
+
+      const terminalElement = document.getElementById("terminal");
+      let currentCommand = 0;
+      let charIndex = 0;
+
+      function typeCommand() {
+        const line = document.createElement("div");
+        line.classList.add("input-line");
+        const inputSpan = document.createElement("span");
+        inputSpan.classList.add("input");
+        inputSpan.textContent = "armaanjeetsandhu@github:~$ ";
+        const commandSpan = document.createElement("span");
+        commandSpan.id = `command-${currentCommand}`;
+        const cursorSpan = document.createElement("span");
+        cursorSpan.classList.add("cursor");
+        line.append(inputSpan, commandSpan, cursorSpan);
+        terminalElement.append(line);
+
+        setTimeout(() => {
+          typeCharacter(
+            commandSpan,
+            cursorSpan,
+            commands[currentCommand].command,
+            showOutput
+          );
+        }, 800);
+      }
+
+      function typeCharacter(element, cursorSpan, text, callback) {
+        if (charIndex < text.length) {
+          element.textContent += text[charIndex];
+          charIndex++;
+          setTimeout(
+            () => typeCharacter(element, cursorSpan, text, callback),
+            70
+          );
+        } else {
+          cursorSpan.style.display = "none";
+          charIndex = 0;
+          setTimeout(callback, 500);
+        }
+      }
+
+      function showOutput() {
+        const outputLine = document.createElement("div");
+        outputLine.classList.add("output");
+        terminalElement.append(outputLine);
+
+        const cursorSpan = document.createElement("span");
+        cursorSpan.classList.add("cursor");
+        outputLine.append(cursorSpan);
+
+        const outputText = commands[currentCommand].output;
+        const outputSpan = document.createElement("span");
+        outputLine.insertBefore(outputSpan, cursorSpan);
+
+        typeCharacter(outputSpan, cursorSpan, outputText, () => {
+          cursorSpan.style.display = "none";
+          if (currentCommand < commands.length - 1) {
+            currentCommand++;
+            setTimeout(typeCommand, 1000);
+          }
+        });
+
+        terminalElement.scrollTop = terminalElement.scrollHeight;
+      }
+
+      setTimeout(typeCommand, 1000);
+    </script>
+  </body>
+</html>
