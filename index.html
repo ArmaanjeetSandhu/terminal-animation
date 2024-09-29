@@ -101,8 +101,9 @@
 
     <script>
       const commands = [
-        { command: "name", output: "Armaanjeet Singh Sandhu" },
-        { command: "age", output: "22" },
+        { command: 'echo "Hello, World!"', output: "Hello, World!" },
+        { command: "whoami", output: "user" },
+        { command: "pwd", output: "/home/user" },
         { command: "date", output: new Date().toLocaleString() },
       ];
 
@@ -115,7 +116,7 @@
         line.classList.add("input-line");
         const inputSpan = document.createElement("span");
         inputSpan.classList.add("input");
-        inputSpan.textContent = "armaanjeetsandhu@github:~$ ";
+        inputSpan.textContent = "user@github:~$ ";
         const commandSpan = document.createElement("span");
         commandSpan.id = `command-${currentCommand}`;
         const cursorSpan = document.createElement("span");
