@@ -123,6 +123,7 @@
         { command: 'echo "Hello, World!"', output: "Hello, World!" },
         { command: "whoami", output: "user" },
         { command: "pwd", output: "/home/user" },
+        { command: "ls", output: "file1.txt\nfile2.txt\nfile3.txt" },
         { command: "date", output: new Date().toLocaleString() },
       ];
 
@@ -155,12 +156,23 @@
 
       function typeCharacter(element, cursorSpan, text, callback) {
         if (charIndex < text.length) {
-          element.textContent += text[charIndex];
-          charIndex++;
-          setTimeout(
-            () => typeCharacter(element, cursorSpan, text, callback),
-            70
-          );
+          if (text[charIndex] === "\n") {
+            setTimeout(() => {
+              element.textContent += "\n";
+              charIndex++;
+              setTimeout(
+                () => typeCharacter(element, cursorSpan, text, callback),
+                500
+              );
+            }, 500);
+          } else {
+            element.textContent += text[charIndex];
+            charIndex++;
+            setTimeout(
+              () => typeCharacter(element, cursorSpan, text, callback),
+              70
+            );
+          }
         } else {
           cursorSpan.style.display = "none";
           charIndex = 0;
